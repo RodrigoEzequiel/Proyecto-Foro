@@ -1,6 +1,7 @@
 package com.alura.foro.Usuario;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Email;
 import lombok.*;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -22,10 +23,14 @@ public class Usuario implements UserDetails {
         @Id
         @GeneratedValue(strategy = GenerationType.IDENTITY)
         private Long id;
-        //TODO: hacer este atributo unico
+        @Column(name = "email", unique = true,nullable = false)
         private String login;
+        @Column(name = "password",nullable = false)
         private String clave;
-
+        @Column(nullable = false)
+        private String nombre;
+        @Column(nullable = false)
+        private String apellido;
         @Override
         public Collection<? extends GrantedAuthority> getAuthorities() {
             return List.of( new SimpleGrantedAuthority("ROLE_USER"));

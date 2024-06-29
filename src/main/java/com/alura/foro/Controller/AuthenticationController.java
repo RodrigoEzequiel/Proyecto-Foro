@@ -35,7 +35,8 @@ public class AuthenticationController {
     @PostMapping("/registro")
     public ResponseEntity registrarUsuario(@RequestBody @Valid DatosAutenticacionUsuarios datosAutenticacionUsuarios){
         String contraseñaEncriptada = passwordEncoder.encode(datosAutenticacionUsuarios.clave());
-        Usuario nuevoUsuario = new Usuario(null,datosAutenticacionUsuarios.login(),contraseñaEncriptada);
+        //TODO agregar nombre y apellido
+        Usuario nuevoUsuario = new Usuario(null,datosAutenticacionUsuarios.login(),contraseñaEncriptada,"rodrigo","Cubilla");
         //TODO: verificar q el nombre de usuario ya exista!
         nuevoUsuario = userRepository.save(nuevoUsuario);
         //TODO: usar un dto para q no devuelva todos los datos
