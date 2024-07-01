@@ -11,6 +11,13 @@ public class RespuestaService {
     @Autowired
     private RespuestaRepository respuestaRepository;
 
+    /**
+
+     Este metodo del servicio se encarga de recibir un DTO de respuesta convertirlo en una respuesta
+     que la base de datos pueda guardar
+     @param respuestaDto es un objeto de transferencia de datos que tiene mensaje y solucion
+     @return me devuelve una Respuesta completa con sus datos.
+     */
     public Respuesta nuevaRespuesta(RespuestaDto respuestaDto){
         Respuesta nueva = new Respuesta();
         nueva.setMensaje(respuestaDto.mensaje());

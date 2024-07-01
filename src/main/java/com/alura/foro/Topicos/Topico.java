@@ -1,5 +1,4 @@
-package com.alura.foro.Respuesta;
-
+package com.alura.foro.Topicos;
 
 import jakarta.persistence.*;
 import lombok.Data;
@@ -8,17 +7,17 @@ import org.hibernate.annotations.UpdateTimestamp;
 
 import java.sql.Timestamp;
 
-/**
- * este el modelo de respuesta, tiene 5 atributos
- */
-@Table(name = "respuestas")
 @Entity
+@Table(name = "topicos")
 @Data
-public class Respuesta {
+public class Topico {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id_respuesta;
+    private Long id;
+
+    @Column(nullable = false)
+    private String titulo;
 
     @Column(nullable = false)
     private String mensaje;
@@ -27,9 +26,6 @@ public class Respuesta {
     private Timestamp fechaCreacion;
     @UpdateTimestamp
     private Timestamp fechaActualizacion;
-    @Column(columnDefinition="tinyint(1) default 1")
-    private boolean solucion;
-    //@Column
-    //@ManyToOne(fetch = FetchType.EAGER)
-    //private Usuario author;
+    //TODO hacer Status(enum), y Relacionar Author, Categoria y Respuestas
+
 }
