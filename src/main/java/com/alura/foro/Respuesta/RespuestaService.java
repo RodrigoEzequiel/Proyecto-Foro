@@ -1,5 +1,10 @@
 package com.alura.foro.Respuesta;
 
+import com.alura.foro.Topicos.Topico;
+import com.alura.foro.Topicos.TopicoService;
+import com.alura.foro.Usuario.UserRepository;
+import com.alura.foro.Usuario.Usuario;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -10,19 +15,20 @@ import java.util.Optional;
 public class RespuestaService {
     @Autowired
     private RespuestaRepository respuestaRepository;
+    @Autowired
+    private TopicoService topicoService;//TODO reemplazar por Repository para evitar referencia ciclica
+    @Autowired
+    private UserRepository userRepository;
 
-    /**
+    public Respuesta nuevaRespuesta(RespuestaDto respuestaDto) throws EntityNotFoundException {
 
-     Este metodo del servicio se encarga de recibir un DTO de respuesta convertirlo en una respuesta
-     que la base de datos pueda guardar
-     @param respuestaDto es un objeto de transferencia de datos que tiene mensaje y solucion
-     @return me devuelve una Respuesta completa con sus datos.
-     */
-    public Respuesta nuevaRespuesta(RespuestaDto respuestaDto){
         Respuesta nueva = new Respuesta();
         nueva.setMensaje(respuestaDto.mensaje());
-        //nueva.setAuthor(respuestaDto.author());
-        nueva.setSolucion(respuestaDto.solucion());
+        Topico buscado = topicoService.buscarPorId(respuestaDto.id_topico());
+        Usuario author = (Usuario) userRepository.findByLogin(respuestaDto.author());
+        nueva.setAuthor(author);
+        if (buscado == null) throw new EntityNotFoundException("no se encontro el topico con el id " + respuestaDto.id_topico());
+        nueva.setTopico(buscado);
         nueva=respuestaRepository.save(nueva);
         return nueva;
     }
@@ -50,4 +56,11 @@ public class RespuestaService {
         }
         return null;
     }
+
+    public List<Respuesta> listarRespuestaPorTopicoId(Long id) {
+        List<Respuesta> encontradas = respuestaRepository.listarRespuestaPorTopicoId(id);
+        return encontradas;
+    }
+
+
 }

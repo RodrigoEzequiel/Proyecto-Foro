@@ -1,16 +1,14 @@
 package com.alura.foro.Respuesta;
 
 
+import com.alura.foro.Topicos.Topico;
+import com.alura.foro.Usuario.Usuario;
 import jakarta.persistence.*;
 import lombok.Data;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
-
 import java.sql.Timestamp;
 
-/**
- * este el modelo de respuesta, tiene 5 atributos
- */
 @Table(name = "respuestas")
 @Entity
 @Data
@@ -22,14 +20,16 @@ public class Respuesta {
 
     @Column(nullable = false)
     private String mensaje;
-
     @CreationTimestamp
     private Timestamp fechaCreacion;
     @UpdateTimestamp
     private Timestamp fechaActualizacion;
     @Column(columnDefinition="tinyint(1) default 1")
     private boolean solucion;
-    //@Column
-    //@ManyToOne(fetch = FetchType.EAGER)
-    //private Usuario author;
+    @ManyToOne(fetch = FetchType.EAGER, optional = false)
+    @JoinColumn(name = "id_topico", nullable = false)
+    private Topico topico;
+    @ManyToOne(fetch = FetchType.EAGER, optional = false)
+    @JoinColumn(name = "id_author", nullable = false)
+    private Usuario author;
 }

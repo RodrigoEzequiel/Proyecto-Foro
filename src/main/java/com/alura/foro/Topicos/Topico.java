@@ -1,5 +1,6 @@
 package com.alura.foro.Topicos;
 
+import com.alura.foro.Usuario.Usuario;
 import jakarta.persistence.*;
 import lombok.Data;
 import org.hibernate.annotations.CreationTimestamp;
@@ -14,7 +15,7 @@ public class Topico {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private Long id_topico;
 
     @Column(nullable = false)
     private String titulo;
@@ -26,6 +27,9 @@ public class Topico {
     private Timestamp fechaCreacion;
     @UpdateTimestamp
     private Timestamp fechaActualizacion;
-    //TODO hacer Status(enum), y Relacionar Author, Categoria y Respuestas
+    //TODO hacer Status(enum), Categoria
+    @ManyToOne(fetch = FetchType.EAGER,optional = false)
+    @JoinColumn(name = "id_author", nullable = false)
+    private Usuario author;
 
 }

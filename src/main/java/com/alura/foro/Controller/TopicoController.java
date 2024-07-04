@@ -1,6 +1,7 @@
 package com.alura.foro.Controller;
 
 import com.alura.foro.Respuesta.Respuesta;
+import com.alura.foro.Respuesta.RespuestaService;
 import com.alura.foro.Topicos.Topico;
 import com.alura.foro.Topicos.TopicoDto;
 import com.alura.foro.Topicos.TopicoService;
@@ -15,6 +16,9 @@ import java.util.List;
 public class TopicoController {
     @Autowired
     private TopicoService topicoService;
+
+    @Autowired
+    private RespuestaService respuestaService;
 
     @PostMapping
     public ResponseEntity crearTopico(@RequestBody TopicoDto topicoDto){
@@ -36,4 +40,10 @@ public class TopicoController {
         List<Topico> todosLosTopicos = topicoService.listarTodas();
         return ResponseEntity.ok(todosLosTopicos);
     }
+    @GetMapping("/{id}/respuestas")
+    public ResponseEntity listarRespuestasPorTopicoId(@PathVariable Long id){
+        List<Respuesta> encontradas = respuestaService.listarRespuestaPorTopicoId(id);
+        return ResponseEntity.ok(encontradas);
+    }
+
 }
