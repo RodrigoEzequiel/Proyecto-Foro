@@ -2,6 +2,7 @@ package com.alura.foro.Respuesta;
 
 import com.alura.foro.Topicos.Topico;
 import com.alura.foro.Topicos.TopicoService;
+import com.alura.foro.Topicos.TopicoStatus;
 import com.alura.foro.Usuario.UserRepository;
 import com.alura.foro.Usuario.Usuario;
 import jakarta.persistence.EntityNotFoundException;
@@ -28,6 +29,8 @@ public class RespuestaService {
         Usuario author = (Usuario) userRepository.findByLogin(respuestaDto.author());
         nueva.setAuthor(author);
         if (buscado == null) throw new EntityNotFoundException("no se encontro el topico con el id " + respuestaDto.id_topico());
+        if (buscado.getStatus()==TopicoStatus.SIN_RESPUESTA)
+            buscado.setStatus(TopicoStatus.ABIERTO);
         nueva.setTopico(buscado);
         nueva=respuestaRepository.save(nueva);
         return nueva;
@@ -52,6 +55,8 @@ public class RespuestaService {
         Respuesta respuesta = this.buscarPorId(id);
         if (respuesta != null){
             respuesta.setSolucion(true);
+            Topico solucionado = respuesta.getTopico();
+            solucionado.setStatus(TopicoStatus.RESUELTO);
             return respuestaRepository.save(respuesta);
         }
         return null;

@@ -23,6 +23,7 @@ public class TopicoService {
         Topico nuevoTopico = new Topico();
         nuevoTopico.setMensaje(nuevoDto.mensaje());
         nuevoTopico.setTitulo(nuevoDto.titulo());
+        nuevoTopico.setStatus(TopicoStatus.SIN_RESPUESTA);
         Usuario author = (Usuario) userRepository.findByLogin(nuevoDto.author());
         nuevoTopico.setAuthor(author);
         try {
