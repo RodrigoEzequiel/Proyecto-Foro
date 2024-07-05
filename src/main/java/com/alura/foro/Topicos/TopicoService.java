@@ -1,5 +1,6 @@
 package com.alura.foro.Topicos;
 
+import com.alura.foro.Errores.BadRequestException;
 import com.alura.foro.Respuesta.Respuesta;
 import com.alura.foro.Respuesta.RespuestaRepository;
 import com.alura.foro.Usuario.UserRepository;
@@ -18,14 +19,19 @@ public class TopicoService {
     @Autowired
     private RespuestaRepository respuestaRepository;
 
-    public Topico crearTopico(TopicoDto nuevoDto){
+    public Topico crearTopico(TopicoDto nuevoDto) throws BadRequestException {
         Topico nuevoTopico = new Topico();
         nuevoTopico.setMensaje(nuevoDto.mensaje());
         nuevoTopico.setTitulo(nuevoDto.titulo());
         Usuario author = (Usuario) userRepository.findByLogin(nuevoDto.author());
         nuevoTopico.setAuthor(author);
-        nuevoTopico = topicoRepository.save(nuevoTopico);
-        return nuevoTopico ;
+        try {
+            nuevoTopico = topicoRepository.save(nuevoTopico);
+            return nuevoTopico ;
+        } catch (Exception ex) {
+            throw new BadRequestException("ya existe un topico con ese nombre");
+        }
+
     }
 
     public Topico buscarPorId(Long id) {
@@ -43,6 +49,20 @@ public class TopicoService {
 
     public List<Topico> listarTodas() {
         return topicoRepository.findAll();
+    }
+    public Topico actualizarTopico(Long id,ActualizarTopicoDto datosActualizados) throws BadRequestException {
+        Optional<Topico> original = topicoRepository.findById(id);
+        if (original.isPresent()){
+            original.get().setMensaje(datosActualizados.mensaje());
+            original.get().setTitulo(datosActualizados.titulo());
+            try {
+                return topicoRepository.save(original.get());
+            } catch (Exception e) {
+                throw new BadRequestException("ya existe un topico con ese nombre");
+            }
+        }else{
+            throw new BadRequestException("no existe un topico con el id " + id);
+        }
     }
 
 }

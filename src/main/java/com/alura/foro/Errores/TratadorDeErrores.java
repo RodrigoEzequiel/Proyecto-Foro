@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 public class TratadorDeErrores {
     @ExceptionHandler(EntityNotFoundException.class)
     public ResponseEntity tratarError404(EntityNotFoundException ex) {
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ex.getMessage());
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ErrorDto(ex.getMessage()));
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
@@ -20,6 +20,10 @@ public class TratadorDeErrores {
         var errores = e.getFieldErrors().stream().map(DatosErrorValidacion::new).toList();
         return ResponseEntity.badRequest().body(errores);
 
+    }
+    @ExceptionHandler(BadRequestException.class)
+    public ResponseEntity tratarError400(BadRequestException ex){
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorDto(ex.getMessage()));
     }
 
     private record DatosErrorValidacion(String campo, String error) {

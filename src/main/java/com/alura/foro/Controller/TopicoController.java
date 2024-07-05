@@ -1,7 +1,9 @@
 package com.alura.foro.Controller;
 
+import com.alura.foro.Errores.BadRequestException;
 import com.alura.foro.Respuesta.Respuesta;
 import com.alura.foro.Respuesta.RespuestaService;
+import com.alura.foro.Topicos.ActualizarTopicoDto;
 import com.alura.foro.Topicos.Topico;
 import com.alura.foro.Topicos.TopicoDto;
 import com.alura.foro.Topicos.TopicoService;
@@ -21,7 +23,7 @@ public class TopicoController {
     private RespuestaService respuestaService;
 
     @PostMapping
-    public ResponseEntity crearTopico(@RequestBody TopicoDto topicoDto){
+    public ResponseEntity crearTopico(@RequestBody TopicoDto topicoDto) throws BadRequestException {
         Topico nuevoTopico = topicoService.crearTopico(topicoDto);
         return ResponseEntity.ok(nuevoTopico);
     }
@@ -45,5 +47,9 @@ public class TopicoController {
         List<Respuesta> encontradas = respuestaService.listarRespuestaPorTopicoId(id);
         return ResponseEntity.ok(encontradas);
     }
-
+    @PatchMapping("/{id}")
+    public ResponseEntity actualizarTopico(@PathVariable Long id,@RequestBody ActualizarTopicoDto datosActualizados) throws BadRequestException {
+        Topico actualizado = topicoService.actualizarTopico(id,datosActualizados);
+        return ResponseEntity.ok(actualizado);
+    }
 }
