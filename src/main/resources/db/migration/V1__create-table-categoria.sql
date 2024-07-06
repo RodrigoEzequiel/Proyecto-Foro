@@ -1,13 +1,13 @@
 create table if not exists categorias(
 
-    id bigint not null,
+    id_categoria bigint not null,
     nombre varchar(100) not null,
 
-    primary key(id)
+    primary key(id_categoria)
 
 );
 insert into categorias
-    (id,nombre)
+    (id_categoria,nombre)
 values
     (1,"PROGRAMACION"),
     (2,"FRONT END"),

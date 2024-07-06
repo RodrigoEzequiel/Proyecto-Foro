@@ -1,5 +1,7 @@
 package com.alura.foro.Topicos;
 
+import com.alura.foro.Categoria.CategoriaRepository;
+import com.alura.foro.Categoria.Categoria;
 import com.alura.foro.Errores.BadRequestException;
 import com.alura.foro.Respuesta.Respuesta;
 import com.alura.foro.Respuesta.RespuestaRepository;
@@ -18,6 +20,9 @@ public class TopicoService {
     private UserRepository userRepository;
     @Autowired
     private RespuestaRepository respuestaRepository;
+    @Autowired
+    private CategoriaRepository categoriaRepository;
+
 
     public Topico crearTopico(TopicoDto nuevoDto) throws BadRequestException {
         Topico nuevoTopico = new Topico();
@@ -26,6 +31,10 @@ public class TopicoService {
         nuevoTopico.setStatus(TopicoStatus.SIN_RESPUESTA);
         Usuario author = (Usuario) userRepository.findByLogin(nuevoDto.author());
         nuevoTopico.setAuthor(author);
+        Optional<Categoria> categoria = categoriaRepository.findById(nuevoDto.id_categoria());
+        if (categoria.isEmpty())
+            throw new BadRequestException("no se encontro una categoria por id " + nuevoDto.id_categoria());
+        nuevoTopico.setCategoria(categoria.get());
         try {
             nuevoTopico = topicoRepository.save(nuevoTopico);
             return nuevoTopico ;
@@ -64,6 +73,9 @@ public class TopicoService {
         }else{
             throw new BadRequestException("no existe un topico con el id " + id);
         }
+    }
+    public List<Categoria> listarCategorias(){
+        return categoriaRepository.findAll();
     }
 
 }

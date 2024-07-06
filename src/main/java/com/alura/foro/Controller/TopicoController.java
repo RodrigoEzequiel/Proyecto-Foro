@@ -1,5 +1,6 @@
 package com.alura.foro.Controller;
 
+import com.alura.foro.Categoria.Categoria;
 import com.alura.foro.Errores.BadRequestException;
 import com.alura.foro.Respuesta.Respuesta;
 import com.alura.foro.Respuesta.RespuestaService;
@@ -51,5 +52,10 @@ public class TopicoController {
     public ResponseEntity actualizarTopico(@PathVariable Long id,@RequestBody ActualizarTopicoDto datosActualizados) throws BadRequestException {
         Topico actualizado = topicoService.actualizarTopico(id,datosActualizados);
         return ResponseEntity.ok(actualizado);
+    }
+    @GetMapping("/categorias")
+    public ResponseEntity listarCategorias(){
+        List<Categoria> encontradas = topicoService.listarCategorias();
+        return ResponseEntity.ok(encontradas);
     }
 }
