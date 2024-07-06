@@ -3,11 +3,9 @@ package com.alura.foro.Controller;
 import com.alura.foro.Categoria.Categoria;
 import com.alura.foro.Errores.BadRequestException;
 import com.alura.foro.Respuesta.Respuesta;
+import com.alura.foro.Respuesta.RespuestaDto;
 import com.alura.foro.Respuesta.RespuestaService;
-import com.alura.foro.Topicos.ActualizarTopicoDto;
-import com.alura.foro.Topicos.Topico;
-import com.alura.foro.Topicos.TopicoDto;
-import com.alura.foro.Topicos.TopicoService;
+import com.alura.foro.Topicos.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -24,13 +22,13 @@ public class TopicoController {
     private RespuestaService respuestaService;
 
     @PostMapping
-    public ResponseEntity crearTopico(@RequestBody TopicoDto topicoDto) throws BadRequestException {
-        Topico nuevoTopico = topicoService.crearTopico(topicoDto);
+    public ResponseEntity crearTopico(@RequestBody NewTopicoDto topicoDto) throws BadRequestException {
+        TopicoDto nuevoTopico = topicoService.crearTopico(topicoDto);
         return ResponseEntity.ok(nuevoTopico);
     }
     @GetMapping("/{id}")
     public ResponseEntity buscarPorId(@PathVariable Long id){
-        Topico encontrada = topicoService.buscarPorId(id);
+        TopicoDto encontrada = topicoService.buscarPorId(id);
         return ResponseEntity.ok(encontrada);
     }
     @DeleteMapping("/{id}")
@@ -45,12 +43,12 @@ public class TopicoController {
     }
     @GetMapping("/{id}/respuestas")
     public ResponseEntity listarRespuestasPorTopicoId(@PathVariable Long id){
-        List<Respuesta> encontradas = respuestaService.listarRespuestaPorTopicoId(id);
+        List<RespuestaDto> encontradas = respuestaService.listarRespuestaPorTopicoId(id);
         return ResponseEntity.ok(encontradas);
     }
     @PatchMapping("/{id}")
     public ResponseEntity actualizarTopico(@PathVariable Long id,@RequestBody ActualizarTopicoDto datosActualizados) throws BadRequestException {
-        Topico actualizado = topicoService.actualizarTopico(id,datosActualizados);
+        TopicoDto actualizado = topicoService.actualizarTopico(id,datosActualizados);
         return ResponseEntity.ok(actualizado);
     }
     @GetMapping("/categorias")

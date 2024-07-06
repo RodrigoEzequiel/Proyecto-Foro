@@ -1,46 +1,48 @@
 package com.alura.foro.Respuesta;
 
+import com.alura.foro.Errores.BadRequestException;
 import com.alura.foro.Topicos.Topico;
-import com.alura.foro.Topicos.TopicoService;
+import com.alura.foro.Topicos.TopicoRepository;
 import com.alura.foro.Topicos.TopicoStatus;
 import com.alura.foro.Usuario.UserRepository;
 import com.alura.foro.Usuario.Usuario;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class RespuestaService {
     @Autowired
     private RespuestaRepository respuestaRepository;
     @Autowired
-    private TopicoService topicoService;//TODO reemplazar por Repository para evitar referencia ciclica
+    private TopicoRepository topicoRepository;
     @Autowired
     private UserRepository userRepository;
 
-    public Respuesta nuevaRespuesta(RespuestaDto respuestaDto) throws EntityNotFoundException {
+    public RespuestaDto nuevaRespuesta(NewRespuestaDto newRespuestaDto) throws EntityNotFoundException {
 
         Respuesta nueva = new Respuesta();
-        nueva.setMensaje(respuestaDto.mensaje());
-        Topico buscado = topicoService.buscarPorId(respuestaDto.id_topico());
-        Usuario author = (Usuario) userRepository.findByLogin(respuestaDto.author());
-        nueva.setAuthor(author);
-        if (buscado == null) throw new EntityNotFoundException("no se encontro el topico con el id " + respuestaDto.id_topico());
+        nueva.setMensaje(newRespuestaDto.mensaje());
+        Topico buscado = topicoRepository.findById(newRespuestaDto.id_topico()).orElse(null);
+        if (buscado == null) throw new EntityNotFoundException("no se encontro el topico con el id " + newRespuestaDto.id_topico());
+        Usuario author = (Usuario) userRepository.findByLogin(newRespuestaDto.author());
+        if (author!=null) {
+            nueva.setAuthor(author);
+        }else throw new EntityNotFoundException("no existe el autor");
+
         if (buscado.getStatus()==TopicoStatus.SIN_RESPUESTA)
             buscado.setStatus(TopicoStatus.ABIERTO);
         nueva.setTopico(buscado);
         nueva=respuestaRepository.save(nueva);
-        return nueva;
+        return RespuestaDto.convertirRespuestaEnDto(nueva);
     }
 
-    public Respuesta buscarPorId(Long id) {
-        Optional<Respuesta> encontrada = respuestaRepository.findById(id);
-        if (encontrada.isPresent())
-            return encontrada.get();
-        else return null;
+    public RespuestaDto buscarPorId(Long id) throws BadRequestException {
+        Respuesta encontrada = respuestaRepository.findById(id).orElse(null);
+        if (encontrada==null)
+            throw new BadRequestException("no se encontro una respuesta con el id " + id);
+        return RespuestaDto.convertirRespuestaEnDto(encontrada);
     }
 
     public void eliminarPorId(Long id) {
@@ -51,20 +53,21 @@ public class RespuestaService {
         return respuestaRepository.findAll();
     }
 
-    public Respuesta marcarSolucion(Long id) {
-        Respuesta respuesta = this.buscarPorId(id);
+    public RespuestaDto marcarSolucion(Long id) throws BadRequestException {
+        Respuesta respuesta = respuestaRepository.findById(id).orElse(null);
         if (respuesta != null){
             respuesta.setSolucion(true);
             Topico solucionado = respuesta.getTopico();
             solucionado.setStatus(TopicoStatus.RESUELTO);
-            return respuestaRepository.save(respuesta);
+            return RespuestaDto.convertirRespuestaEnDto(respuestaRepository.save(respuesta));
         }
-        return null;
+        throw new BadRequestException("no se encontro una respuesta con el id " + id);
     }
 
-    public List<Respuesta> listarRespuestaPorTopicoId(Long id) {
+    public List<RespuestaDto> listarRespuestaPorTopicoId(Long id) {
         List<Respuesta> encontradas = respuestaRepository.listarRespuestaPorTopicoId(id);
-        return encontradas;
+        List<RespuestaDto> convertidas = encontradas.stream().map(respuesta -> RespuestaDto.convertirRespuestaEnDto(respuesta)).toList();
+        return convertidas;
     }
 
 

@@ -1,6 +1,8 @@
 package com.alura.foro.Controller;
 
+import com.alura.foro.Errores.BadRequestException;
 import com.alura.foro.Respuesta.Respuesta;
+import com.alura.foro.Respuesta.NewRespuestaDto;
 import com.alura.foro.Respuesta.RespuestaDto;
 import com.alura.foro.Respuesta.RespuestaService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,14 +17,14 @@ public class RespuestaController {
     private RespuestaService respuestaService;
 
     @PostMapping
-    public ResponseEntity guardarRespuesta(@RequestBody RespuestaDto respuestaDto){
-        Respuesta nueva = respuestaService.nuevaRespuesta(respuestaDto);
+    public ResponseEntity guardarRespuesta(@RequestBody NewRespuestaDto newRespuestaDto){
+        RespuestaDto nueva = respuestaService.nuevaRespuesta(newRespuestaDto);
         return ResponseEntity.ok(nueva);
 
     }
     @GetMapping("/{id}")
-    public ResponseEntity buscarPorId(@PathVariable Long id){
-        Respuesta encontrada = respuestaService.buscarPorId(id);
+    public ResponseEntity buscarPorId(@PathVariable Long id) throws BadRequestException {
+        RespuestaDto encontrada = respuestaService.buscarPorId(id);
         return ResponseEntity.ok(encontrada);
     }
     @DeleteMapping("/{id}")
@@ -36,8 +38,8 @@ public class RespuestaController {
         return ResponseEntity.ok(todasLasRespuestas);
     }
     @PatchMapping("/{id}")
-    public ResponseEntity marcarSolucion(@PathVariable Long id){
-        Respuesta solucion = respuestaService.marcarSolucion(id);
+    public ResponseEntity marcarSolucion(@PathVariable Long id) throws BadRequestException {
+        RespuestaDto solucion = respuestaService.marcarSolucion(id);
         return ResponseEntity.ok(solucion);
     }
 }

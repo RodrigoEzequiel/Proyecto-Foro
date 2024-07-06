@@ -1,11 +1,28 @@
 package com.alura.foro.Respuesta;
 
-import com.alura.foro.Usuario.Usuario;
+import com.alura.foro.Topicos.TopicoDto;
 
-/**
- * esto es un Dto de respuesta, es lo q envio en postman para q se cree una nueva resp en el foro
- * @param mensaje es el cuerpo de la respuesta el topico
- * @param id_topico es el id del topico q se esta respondiendo
- */
-public record RespuestaDto(String mensaje, Long id_topico,String author) {
+import java.sql.Timestamp;
+
+public record RespuestaDto(Long id_respuesta,
+                           String mensaje,
+                           Timestamp fechaCreacion,
+                           Timestamp fechaActualizacion,
+                           Boolean solucion,
+                           TopicoDto topico,
+                           String authorEmail,
+                           String authorNombre,
+                           String authorApellido) {
+
+    public static RespuestaDto convertirRespuestaEnDto(Respuesta respuesta){
+        return new RespuestaDto(respuesta.getId_respuesta(),
+                respuesta.getMensaje(),
+                respuesta.getFechaCreacion(),
+                respuesta.getFechaActualizacion(),
+                respuesta.isSolucion(),
+                TopicoDto.convertirTopicoEnDto(respuesta.getTopico()),
+                respuesta.getAuthor().getLogin(),
+                respuesta.getAuthor().getNombre(),
+                respuesta.getAuthor().getApellido());
+    }
 }

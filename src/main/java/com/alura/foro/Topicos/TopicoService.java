@@ -24,7 +24,7 @@ public class TopicoService {
     private CategoriaRepository categoriaRepository;
 
 
-    public Topico crearTopico(TopicoDto nuevoDto) throws BadRequestException {
+    public TopicoDto crearTopico(NewTopicoDto nuevoDto) throws BadRequestException {
         Topico nuevoTopico = new Topico();
         nuevoTopico.setMensaje(nuevoDto.mensaje());
         nuevoTopico.setTitulo(nuevoDto.titulo());
@@ -37,17 +37,18 @@ public class TopicoService {
         nuevoTopico.setCategoria(categoria.get());
         try {
             nuevoTopico = topicoRepository.save(nuevoTopico);
-            return nuevoTopico ;
+            TopicoDto nuevo = TopicoDto.convertirTopicoEnDto(nuevoTopico);
+            return  nuevo;
         } catch (Exception ex) {
             throw new BadRequestException("ya existe un topico con ese nombre");
         }
 
     }
 
-    public Topico buscarPorId(Long id) {
+    public TopicoDto buscarPorId(Long id) {
         Optional<Topico> encontrada = topicoRepository.findById(id);
         if (encontrada.isPresent())
-            return encontrada.get();
+            return TopicoDto.convertirTopicoEnDto(encontrada.get());
         else return null;
     }
 
@@ -60,13 +61,13 @@ public class TopicoService {
     public List<Topico> listarTodas() {
         return topicoRepository.findAll();
     }
-    public Topico actualizarTopico(Long id,ActualizarTopicoDto datosActualizados) throws BadRequestException {
+    public TopicoDto actualizarTopico(Long id,ActualizarTopicoDto datosActualizados) throws BadRequestException {
         Optional<Topico> original = topicoRepository.findById(id);
         if (original.isPresent()){
             original.get().setMensaje(datosActualizados.mensaje());
             original.get().setTitulo(datosActualizados.titulo());
             try {
-                return topicoRepository.save(original.get());
+                return TopicoDto.convertirTopicoEnDto(topicoRepository.save(original.get()));
             } catch (Exception e) {
                 throw new BadRequestException("ya existe un topico con ese nombre");
             }
@@ -77,5 +78,6 @@ public class TopicoService {
     public List<Categoria> listarCategorias(){
         return categoriaRepository.findAll();
     }
+
 
 }
