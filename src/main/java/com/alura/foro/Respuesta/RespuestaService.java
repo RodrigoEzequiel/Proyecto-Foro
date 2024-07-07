@@ -8,6 +8,8 @@ import com.alura.foro.Usuario.UserRepository;
 import com.alura.foro.Usuario.Usuario;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import java.util.List;
 
@@ -64,10 +66,9 @@ public class RespuestaService {
         throw new BadRequestException("no se encontro una respuesta con el id " + id);
     }
 
-    public List<RespuestaDto> listarRespuestaPorTopicoId(Long id) {
-        List<Respuesta> encontradas = respuestaRepository.listarRespuestaPorTopicoId(id);
-        List<RespuestaDto> convertidas = encontradas.stream().map(respuesta -> RespuestaDto.convertirRespuestaEnDto(respuesta)).toList();
-        return convertidas;
+    public Page<Respuesta> listarRespuestaPorTopicoId(Long id, Pageable pagina) {
+        Page<Respuesta> encontradas = respuestaRepository.listarRespuestaPorTopicoId(id,pagina);
+        return encontradas;
     }
 
 

@@ -7,10 +7,15 @@ import com.alura.foro.Respuesta.RespuestaDto;
 import com.alura.foro.Respuesta.RespuestaService;
 import com.alura.foro.Topicos.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/topicos")
@@ -37,14 +42,32 @@ public class TopicoController {
         return ResponseEntity.ok("se elimino con exito");
     }
     @GetMapping
-    public ResponseEntity listarTodas(){
-        List<Topico> todosLosTopicos = topicoService.listarTodas();
-        return ResponseEntity.ok(todosLosTopicos);
+    public ResponseEntity listarTodas(@RequestParam(defaultValue = "0") int page,
+                                      @RequestParam(defaultValue = "2") int size){
+        Pageable pagina = PageRequest.of(page,size);
+        Page<TopicoFullDto> todosLosTopicos = topicoService.listarTodos(pagina);
+        Map<String,Object> response = new HashMap<>();
+        response.put("Topicos totales",todosLosTopicos.getTotalElements());
+        response.put("Pagina actual", todosLosTopicos.getNumber());
+        response.put("Total de paginas", todosLosTopicos.getTotalPages());
+        response.put("Resultados por pagina", todosLosTopicos.getSize());
+        response.put("Topicos",todosLosTopicos.get());
+        return ResponseEntity.ok(response);
     }
     @GetMapping("/{id}/respuestas")
-    public ResponseEntity listarRespuestasPorTopicoId(@PathVariable Long id){
-        List<RespuestaDto> encontradas = respuestaService.listarRespuestaPorTopicoId(id);
-        return ResponseEntity.ok(encontradas);
+    public ResponseEntity listarRespuestasPorTopicoId(@PathVariable Long id,
+                                                      @RequestParam(defaultValue = "0") int page,
+                                                      @RequestParam(defaultValue = "2") int size){
+        Pageable pagina = PageRequest.of(page,size);
+        Page<Respuesta> encontradas = respuestaService.listarRespuestaPorTopicoId(id,pagina);
+        Map<String,Object> response = new HashMap<>();
+        response.put("Respuestas totales",encontradas.getTotalElements());
+        response.put("Pagina actual", encontradas.getNumber());
+        response.put("Total de paginas", encontradas.getTotalPages());
+        response.put("Resultados por pagina", encontradas.getSize());
+        List<RespuestaDto> convertidas = encontradas.get().toList().stream().map(RespuestaDto::convertirRespuestaEnDto).toList();
+        response.put("Respuestas",convertidas);
+        return ResponseEntity.ok(response);
     }
     @PatchMapping("/{id}")
     public ResponseEntity actualizarTopico(@PathVariable Long id,@RequestBody ActualizarTopicoDto datosActualizados) throws BadRequestException {

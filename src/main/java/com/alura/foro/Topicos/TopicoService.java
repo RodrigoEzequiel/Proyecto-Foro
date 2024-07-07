@@ -8,6 +8,8 @@ import com.alura.foro.Respuesta.RespuestaRepository;
 import com.alura.foro.Usuario.UserRepository;
 import com.alura.foro.Usuario.Usuario;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Optional;
@@ -58,8 +60,8 @@ public class TopicoService {
         topicoRepository.deleteById(id);
     }
 
-    public List<Topico> listarTodas() {
-        return topicoRepository.findAll();
+    public Page<TopicoFullDto> listarTodos(Pageable pagina) {
+        return topicoRepository.listarTopicosComoDto(pagina);
     }
     public TopicoDto actualizarTopico(Long id,ActualizarTopicoDto datosActualizados) throws BadRequestException {
         Optional<Topico> original = topicoRepository.findById(id);
