@@ -1,11 +1,10 @@
 package com.alura.foro.Controller;
 
+import com.alura.foro.Errores.BadRequestException;
 import com.alura.foro.Errores.ErrorDto;
-import com.alura.foro.Security.DatosJWTToken;
+import com.alura.foro.Security.LoginResponse;
 import com.alura.foro.Security.TokenService;
-import com.alura.foro.Usuario.DatosAutenticacionUsuarios;
-import com.alura.foro.Usuario.UserRepository;
-import com.alura.foro.Usuario.Usuario;
+import com.alura.foro.Usuario.*;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -18,7 +17,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/usuarios")
-public class AuthenticationController {
+public class UsuarioController {
     @Autowired
     private AuthenticationManager authenticationManager;
     @Autowired
@@ -29,13 +28,13 @@ public class AuthenticationController {
     private PasswordEncoder passwordEncoder;
 
     @PostMapping("/login")
-    public ResponseEntity autenticarUsuario(@RequestBody @Valid DatosAutenticacionUsuarios datosAutenticacionUsuarios) {
-        UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(datosAutenticacionUsuarios.login()
-                , datosAutenticacionUsuarios.clave());
+    public ResponseEntity autenticarUsuario(@RequestBody @Valid loginDto loginDto) {
+        UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(loginDto.login()
+                , loginDto.clave());
         try{
             var usuarioAutenticado = authenticationManager.authenticate(authToken);
             var JWTToken = tokenService.generarToken((Usuario) usuarioAutenticado.getPrincipal());
-            return ResponseEntity.ok(new DatosJWTToken(JWTToken));
+            return ResponseEntity.ok(new LoginResponse(loginDto.login(),JWTToken));
         }catch(AuthenticationException ex) {
             System.out.println(ex.getMessage());
         }
@@ -43,17 +42,16 @@ public class AuthenticationController {
     }
 
     @PostMapping("/registro")
-    public ResponseEntity registrarUsuario(@RequestBody @Valid DatosAutenticacionUsuarios datosAutenticacionUsuarios){
-        String contraseñaEncriptada = passwordEncoder.encode(datosAutenticacionUsuarios.clave());
-        //TODO agregar nombre y apellido
-        Usuario nuevoUsuario = new Usuario(null,datosAutenticacionUsuarios.login(),contraseñaEncriptada,"rodrigo","Cubilla");
-        //TODO: verificar q el nombre de usuario ya exista!
-        nuevoUsuario = userRepository.save(nuevoUsuario);
-        //TODO: usar un dto para q no devuelva todos los datos
-        return ResponseEntity.ok(nuevoUsuario) ;
+    public ResponseEntity registrarUsuario(@RequestBody @Valid NewUserDto nuevoUsuario) throws BadRequestException {
+        String contraseñaEncriptada = passwordEncoder.encode(nuevoUsuario.password());
+        Usuario registrado = new Usuario(null, nuevoUsuario.email(),contraseñaEncriptada,nuevoUsuario.nombre(),nuevoUsuario.apellido());
+        try {
+            registrado = userRepository.save(registrado);
+        } catch (Exception e) {
+            throw new BadRequestException("ocurrio un error registrando un usuario");
+        }
+        UserDto datosUsuario = UserDto.convertirUsuarioEnDto(registrado);
+        return ResponseEntity.ok(datosUsuario) ;
     }
-    @GetMapping("/test")
-    public ResponseEntity test(){
-        return ResponseEntity.ok("hola mundo");
-    }
+
 }

@@ -70,7 +70,7 @@ public class TopicoController {
         return ResponseEntity.ok(response);
     }
     @PatchMapping("/{id}")
-    public ResponseEntity actualizarTopico(@PathVariable Long id,@RequestBody ActualizarTopicoDto datosActualizados) throws BadRequestException {
+    public ResponseEntity actualizarTopico(@PathVariable Long id,@RequestBody UpdateTopicoDto datosActualizados) throws BadRequestException {
         TopicoDto actualizado = topicoService.actualizarTopico(id,datosActualizados);
         return ResponseEntity.ok(actualizado);
     }

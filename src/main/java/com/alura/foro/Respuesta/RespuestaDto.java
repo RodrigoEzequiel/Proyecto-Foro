@@ -1,6 +1,5 @@
 package com.alura.foro.Respuesta;
 
-import com.alura.foro.Topicos.TopicoDto;
 
 import java.sql.Timestamp;
 
@@ -9,7 +8,6 @@ public record RespuestaDto(Long id_respuesta,
                            Timestamp fechaCreacion,
                            Timestamp fechaActualizacion,
                            Boolean solucion,
-                           TopicoDto topico,
                            String authorEmail,
                            String authorNombre,
                            String authorApellido) {
@@ -20,7 +18,6 @@ public record RespuestaDto(Long id_respuesta,
                 respuesta.getFechaCreacion(),
                 respuesta.getFechaActualizacion(),
                 respuesta.isSolucion(),
-                TopicoDto.convertirTopicoEnDto(respuesta.getTopico()),
                 respuesta.getAuthor().getLogin(),
                 respuesta.getAuthor().getNombre(),
                 respuesta.getAuthor().getApellido());

@@ -51,10 +51,6 @@ public class RespuestaService {
         respuestaRepository.deleteById(id);
     }
 
-    public List<Respuesta> listarTodas() {
-        return respuestaRepository.findAll();
-    }
-
     public RespuestaDto marcarSolucion(Long id) throws BadRequestException {
         Respuesta respuesta = respuestaRepository.findById(id).orElse(null);
         if (respuesta != null){
@@ -72,4 +68,10 @@ public class RespuestaService {
     }
 
 
+    public RespuestaDto actualizarRespuesta(Long id, UpdateRespuestaDto datosActualizados) throws BadRequestException {
+        Respuesta actualizada = respuestaRepository.findById(id).orElse(null);
+        if (actualizada==null) throw new BadRequestException("no se encontro una respuesta con el id " + id);
+        actualizada.setMensaje(datosActualizados.mensaje());
+        return RespuestaDto.convertirRespuestaEnDto(respuestaRepository.save(actualizada)) ;
+    }
 }

@@ -28,23 +28,23 @@ public class SecurityConfiguration {
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
-        return httpSecurity.cors(AbstractHttpConfigurer::disable).csrf(AbstractHttpConfigurer::disable)
+        final String[] AUTH_WHITELIST = {
+                "/usuarios**"
+        };
+        return httpSecurity.csrf(AbstractHttpConfigurer::disable)
                 //csrf es una configuracion de seguridad que previene el ataque a las request para extraer informacion sensible
-                //lo deshabilitamos para poder usar el postman, pero cuando tengamos un servidor con formularios de fronend
-                // hay que quitar esta linea y configurar el origen de las peticiones CORS
                 //configuramos los endpoint segun el tipo de acceso segun el rol
                 .authorizeHttpRequests(auth -> {
-                    auth.requestMatchers(HttpMethod.POST,"/usuarios/registro").permitAll();
-                    auth.requestMatchers(HttpMethod.POST,"/usuarios/login").permitAll();
+                    //auth.requestMatchers(HttpMethod.POST,"/usuarios/registro").permitAll();
+                    auth.requestMatchers(AUTH_WHITELIST).permitAll();
                     auth.anyRequest().authenticated();
                 })
                 //configuramos si el servidor guarda o no informacion de los usuarios unas vez logueados
                 .sessionManagement( session -> {
                     session.sessionCreationPolicy(SessionCreationPolicy.STATELESS);
                 })
-                // este setea la autorizacion basica
-                //cuando se implemente JWT esta linea debe quitarse
-                .addFilterBefore(new SecurityFilter(tokenService,userAuthenticationService), UsernamePasswordAuthenticationFilter.class)
+                //filtro para el jwt
+                .addFilterBefore(new JWTFilter(tokenService,userAuthenticationService), UsernamePasswordAuthenticationFilter.class)
                 .build();
     }
 

@@ -17,7 +17,7 @@ import org.springframework.security.web.authentication.WebAuthenticationDetailsS
 
 @Component
 @AllArgsConstructor
-public class SecurityFilter extends OncePerRequestFilter {
+public class JWTFilter extends OncePerRequestFilter {
     @Autowired
     private TokenService tokenService;
 
@@ -45,8 +45,7 @@ public class SecurityFilter extends OncePerRequestFilter {
                     new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
             springToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
             SecurityContextHolder.getContext().setAuthentication(springToken);
-        } else {
-            System.out.println("Usuario invalido..");
+            System.out.println("usuario logueado exitosamente");
         }
         filterChain.doFilter(request, response);
     }

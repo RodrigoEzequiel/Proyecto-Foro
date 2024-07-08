@@ -63,7 +63,7 @@ public class TopicoService {
     public Page<TopicoFullDto> listarTodos(Pageable pagina) {
         return topicoRepository.listarTopicosComoDto(pagina);
     }
-    public TopicoDto actualizarTopico(Long id,ActualizarTopicoDto datosActualizados) throws BadRequestException {
+    public TopicoDto actualizarTopico(Long id, UpdateTopicoDto datosActualizados) throws BadRequestException {
         Optional<Topico> original = topicoRepository.findById(id);
         if (original.isPresent()){
             original.get().setMensaje(datosActualizados.mensaje());
