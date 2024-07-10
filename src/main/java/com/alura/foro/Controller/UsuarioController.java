@@ -5,6 +5,12 @@ import com.alura.foro.Errores.ErrorDto;
 import com.alura.foro.Security.LoginResponse;
 import com.alura.foro.Security.TokenService;
 import com.alura.foro.Usuario.*;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -15,6 +21,7 @@ import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
+@Tag(name = "Usuario Controller", description = "Todos los metodos para trabajar con usuarios")
 @RestController
 @RequestMapping("/usuarios")
 public class UsuarioController {
@@ -27,6 +34,13 @@ public class UsuarioController {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
+    @Operation(summary = "Endpoint para loguear un usuario")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Usuario logueo exitosamente",
+                    content = { @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = LoginResponse.class)) }),
+            @ApiResponse(responseCode = "400", description = "Registro incorrecto",
+                    content = @Content), })
     @PostMapping("/login")
     public ResponseEntity autenticarUsuario(@RequestBody @Valid loginDto loginDto) {
         UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(loginDto.login()

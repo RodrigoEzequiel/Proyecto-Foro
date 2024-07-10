@@ -5,7 +5,14 @@ import com.alura.foro.Errores.BadRequestException;
 import com.alura.foro.Respuesta.Respuesta;
 import com.alura.foro.Respuesta.RespuestaDto;
 import com.alura.foro.Respuesta.RespuestaService;
+import com.alura.foro.Security.LoginResponse;
 import com.alura.foro.Topicos.*;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -17,6 +24,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+@Tag(name = "Topico Controller", description = "Todos los metodos para trabajar con Topicos")
 @RestController
 @RequestMapping("/topicos")
 public class TopicoController {
@@ -25,6 +33,14 @@ public class TopicoController {
 
     @Autowired
     private RespuestaService respuestaService;
+
+    @Operation(summary = "Endpoint para crear un Topico")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "El topico se creo exitosamente",
+                    content = { @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = LoginResponse.class)) }),
+            @ApiResponse(responseCode = "400", description = "No se pudo crear el topico",
+                    content = @Content), })
 
     @PostMapping
     public ResponseEntity crearTopico(@RequestBody NewTopicoDto topicoDto) throws BadRequestException {

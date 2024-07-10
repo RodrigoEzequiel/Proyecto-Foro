@@ -4,7 +4,6 @@ import com.alura.foro.Usuario.UserAuthenticationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -29,9 +28,11 @@ public class SecurityConfiguration {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
         final String[] AUTH_WHITELIST = {
-                "/usuarios**"
+                "/usuarios/**",
+                "/api-docs/**",
+                "/swagger-ui/**",
         };
-        return httpSecurity.csrf(AbstractHttpConfigurer::disable)
+        return httpSecurity.cors(AbstractHttpConfigurer::disable).csrf(AbstractHttpConfigurer::disable)
                 //csrf es una configuracion de seguridad que previene el ataque a las request para extraer informacion sensible
                 //configuramos los endpoint segun el tipo de acceso segun el rol
                 .authorizeHttpRequests(auth -> {
