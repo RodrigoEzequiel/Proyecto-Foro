@@ -38,7 +38,7 @@ public class TopicoController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "El topico se creo exitosamente",
                     content = { @Content(mediaType = "application/json",
-                            schema = @Schema(implementation = LoginResponse.class)) }),
+                            schema = @Schema(implementation = TopicoDto.class)) }),
             @ApiResponse(responseCode = "400", description = "No se pudo crear el topico",
                     content = @Content), })
 
@@ -47,16 +47,38 @@ public class TopicoController {
         TopicoDto nuevoTopico = topicoService.crearTopico(topicoDto);
         return ResponseEntity.ok(nuevoTopico);
     }
+
+    @Operation(summary = "Endpoint para buscar un topico por id ")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "devuelve el topico exitosamente",
+                    content = { @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = TopicoDto.class)) }),
+            @ApiResponse(responseCode = "400", description = "no se pudo encontrar el topico",
+                    content = @Content), })
     @GetMapping("/{id}")
     public ResponseEntity buscarPorId(@PathVariable Long id){
         TopicoDto encontrada = topicoService.buscarPorId(id);
         return ResponseEntity.ok(encontrada);
     }
+
+    @Operation(summary = "Endpoint para eliminar un topico por id ")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "El topico se elimino exitosamente",
+                    content = { @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = String.class)) })
+    })
     @DeleteMapping("/{id}")
     public ResponseEntity eliminarPorId(@PathVariable Long id){
         topicoService.eliminarPorId(id);
         return ResponseEntity.ok("se elimino con exito");
     }
+
+    @Operation(summary = "Endpoint para listar los topicos paginados ")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Se listan los topicos  exitosamente",
+                    content = { @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = HashMap.class)) })
+    })
     @GetMapping
     public ResponseEntity listarTodas(@RequestParam(defaultValue = "0") int page,
                                       @RequestParam(defaultValue = "2") int size){
@@ -70,6 +92,13 @@ public class TopicoController {
         response.put("Topicos",todosLosTopicos.get());
         return ResponseEntity.ok(response);
     }
+
+    @Operation(summary = "Endpoint para listar las respuestas paginadas de un topico ")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Se listan las respuestas exitosamente",
+                    content = { @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = HashMap.class)) })
+    })
     @GetMapping("/{id}/respuestas")
     public ResponseEntity listarRespuestasPorTopicoId(@PathVariable Long id,
                                                       @RequestParam(defaultValue = "0") int page,
@@ -85,11 +114,29 @@ public class TopicoController {
         response.put("Respuestas",convertidas);
         return ResponseEntity.ok(response);
     }
+
+    @Operation(summary = "Endpoint para actualizar un topico")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "El topico se actualizo exitosamente",
+                    content = { @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = TopicoDto.class)) }),
+            @ApiResponse(responseCode = "400", description = "no se pudo encontrar el topico",
+                    content = @Content),
+            @ApiResponse(responseCode = "400", description = "ya existe un topico con el mismo titulo",
+                    content = @Content),
+    })
     @PatchMapping("/{id}")
     public ResponseEntity actualizarTopico(@PathVariable Long id,@RequestBody UpdateTopicoDto datosActualizados) throws BadRequestException {
         TopicoDto actualizado = topicoService.actualizarTopico(id,datosActualizados);
         return ResponseEntity.ok(actualizado);
     }
+
+    @Operation(summary = "Endpoint para listar las categorias")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Se listan las  categorias exitosamente",
+                    content = { @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = List.class)) })
+    })
     @GetMapping("/categorias")
     public ResponseEntity listarCategorias(){
         List<Categoria> encontradas = topicoService.listarCategorias();

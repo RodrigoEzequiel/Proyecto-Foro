@@ -40,7 +40,9 @@ public class UsuarioController {
                     content = { @Content(mediaType = "application/json",
                             schema = @Schema(implementation = LoginResponse.class)) }),
             @ApiResponse(responseCode = "400", description = "Registro incorrecto",
-                    content = @Content), })
+                    content = { @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = ErrorDto.class)) })
+    })
     @PostMapping("/login")
     public ResponseEntity autenticarUsuario(@RequestBody @Valid loginDto loginDto) {
         UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(loginDto.login()
@@ -55,6 +57,15 @@ public class UsuarioController {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorDto("registro incorrecto"));
     }
 
+    @Operation(summary = "Endpoint para registrar un usuario nuevo")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Se registro el nuevo usuario exitosamente",
+                    content = { @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = UserDto.class)) }),
+            @ApiResponse(responseCode = "400", description = "Registro incorrecto",
+                    content = { @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = String.class)) })
+    })
     @PostMapping("/registro")
     public ResponseEntity registrarUsuario(@RequestBody @Valid NewUserDto nuevoUsuario) throws BadRequestException {
         String contraseñaEncriptada = passwordEncoder.encode(nuevoUsuario.password());
