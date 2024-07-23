@@ -12,5 +12,5 @@ import jakarta.validation.constraints.Size;
  */
 public record NewRespuestaDto(@NotBlank @Size(min= 10, max = 256) String mensaje,
                               @Min(1) Long id_topico,
-                              @Email String author) {
+                              @NotBlank @Email String author) {
 }

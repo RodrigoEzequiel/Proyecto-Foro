@@ -25,6 +25,7 @@ public class Usuario implements UserDetails {
         private Long id;
 
         @Email
+        @NotBlank
         @Column(name = "email", unique = true,nullable = false)
         private String login;
 

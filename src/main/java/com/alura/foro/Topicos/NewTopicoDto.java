@@ -7,6 +7,6 @@ import jakarta.validation.constraints.Size;
 
 public record NewTopicoDto(@NotBlank @Size(min= 10, max = 256)String titulo,
                            @NotBlank @Size(min= 10, max = 256) String mensaje,
-                           @Email String author,
+                           @NotBlank @Email String author,
                            @Min(1) Long id_categoria) {
 }
