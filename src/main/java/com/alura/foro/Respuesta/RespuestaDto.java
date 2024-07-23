@@ -1,6 +1,5 @@
 package com.alura.foro.Respuesta;
 
-
 import java.sql.Timestamp;
 
 public record RespuestaDto(Long id_respuesta,

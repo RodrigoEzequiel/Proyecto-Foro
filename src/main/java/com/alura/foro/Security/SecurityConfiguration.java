@@ -32,7 +32,7 @@ public class SecurityConfiguration {
                 "/api-docs/**",
                 "/swagger-ui/**",
         };
-        return httpSecurity.cors(AbstractHttpConfigurer::disable).csrf(AbstractHttpConfigurer::disable)
+        return httpSecurity.csrf(AbstractHttpConfigurer::disable)
                 //csrf es una configuracion de seguridad que previene el ataque a las request para extraer informacion sensible
                 //configuramos los endpoint segun el tipo de acceso segun el rol
                 .authorizeHttpRequests(auth -> {

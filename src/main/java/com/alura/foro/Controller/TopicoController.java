@@ -5,7 +5,6 @@ import com.alura.foro.Errores.BadRequestException;
 import com.alura.foro.Respuesta.Respuesta;
 import com.alura.foro.Respuesta.RespuestaDto;
 import com.alura.foro.Respuesta.RespuestaService;
-import com.alura.foro.Security.LoginResponse;
 import com.alura.foro.Topicos.*;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -13,13 +12,13 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -43,7 +42,7 @@ public class TopicoController {
                     content = @Content), })
 
     @PostMapping
-    public ResponseEntity crearTopico(@RequestBody NewTopicoDto topicoDto) throws BadRequestException {
+    public ResponseEntity crearTopico(@RequestBody @Valid NewTopicoDto topicoDto) throws BadRequestException {
         TopicoDto nuevoTopico = topicoService.crearTopico(topicoDto);
         return ResponseEntity.ok(nuevoTopico);
     }
@@ -56,7 +55,7 @@ public class TopicoController {
             @ApiResponse(responseCode = "400", description = "no se pudo encontrar el topico",
                     content = @Content), })
     @GetMapping("/{id}")
-    public ResponseEntity buscarPorId(@PathVariable Long id){
+    public ResponseEntity buscarPorId(@PathVariable Long id) throws BadRequestException {
         TopicoDto encontrada = topicoService.buscarPorId(id);
         return ResponseEntity.ok(encontrada);
     }
@@ -126,7 +125,8 @@ public class TopicoController {
                     content = @Content),
     })
     @PatchMapping("/{id}")
-    public ResponseEntity actualizarTopico(@PathVariable Long id,@RequestBody UpdateTopicoDto datosActualizados) throws BadRequestException {
+    public ResponseEntity actualizarTopico(@PathVariable Long id,
+                                           @RequestBody @Valid UpdateTopicoDto datosActualizados) throws BadRequestException {
         TopicoDto actualizado = topicoService.actualizarTopico(id,datosActualizados);
         return ResponseEntity.ok(actualizado);
     }

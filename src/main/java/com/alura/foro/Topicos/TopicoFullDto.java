@@ -1,7 +1,6 @@
 package com.alura.foro.Topicos;
 
 import com.alura.foro.Categoria.Categoria;
-
 import java.sql.Timestamp;
 
 public record TopicoFullDto(Long idTopico,

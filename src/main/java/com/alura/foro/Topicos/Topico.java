@@ -25,14 +25,18 @@ public class Topico {
 
     @CreationTimestamp
     private Timestamp fechaCreacion;
+
     @UpdateTimestamp
     private Timestamp fechaActualizacion;
+
     @ManyToOne(fetch = FetchType.EAGER,optional = false)
     @JoinColumn(name = "id_author", nullable = false)
     private Usuario author;
+
     @Column(name = "estado",nullable = false)
     @Enumerated(value = EnumType.STRING)
     private TopicoStatus status;
+
     @ManyToOne(fetch = FetchType.EAGER,optional = false)
     @JoinColumn(name = "id_categoria",nullable = false)
     private Categoria categoria;

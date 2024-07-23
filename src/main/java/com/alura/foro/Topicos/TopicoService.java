@@ -25,18 +25,20 @@ public class TopicoService {
     @Autowired
     private CategoriaRepository categoriaRepository;
 
-
     public TopicoDto crearTopico(NewTopicoDto nuevoDto) throws BadRequestException {
-        Topico nuevoTopico = new Topico();
-        nuevoTopico.setMensaje(nuevoDto.mensaje());
-        nuevoTopico.setTitulo(nuevoDto.titulo());
-        nuevoTopico.setStatus(TopicoStatus.SIN_RESPUESTA);
         Usuario author = (Usuario) userRepository.findByLogin(nuevoDto.author());
-        nuevoTopico.setAuthor(author);
+        if (author == null) throw new BadRequestException("No existe un usuario con ese email");
         Optional<Categoria> categoria = categoriaRepository.findById(nuevoDto.id_categoria());
         if (categoria.isEmpty())
             throw new BadRequestException("no se encontro una categoria por id " + nuevoDto.id_categoria());
+
+        Topico nuevoTopico = new Topico();
         nuevoTopico.setCategoria(categoria.get());
+        nuevoTopico.setMensaje(nuevoDto.mensaje());
+        nuevoTopico.setTitulo(nuevoDto.titulo());
+        nuevoTopico.setStatus(TopicoStatus.SIN_RESPUESTA);
+        nuevoTopico.setAuthor(author);
+
         try {
             nuevoTopico = topicoRepository.save(nuevoTopico);
             TopicoDto nuevo = TopicoDto.convertirTopicoEnDto(nuevoTopico);
@@ -47,11 +49,10 @@ public class TopicoService {
 
     }
 
-    public TopicoDto buscarPorId(Long id) {
-        Optional<Topico> encontrada = topicoRepository.findById(id);
-        if (encontrada.isPresent())
-            return TopicoDto.convertirTopicoEnDto(encontrada.get());
-        else return null;
+    public TopicoDto buscarPorId(Long id) throws BadRequestException {
+        Topico encontrada = topicoRepository.findById(id).orElse(null);
+        if (encontrada == null) throw new BadRequestException("No existe un topico con el id " + id);
+        return TopicoDto.convertirTopicoEnDto(encontrada);
     }
 
     public void eliminarPorId(Long id) {
@@ -63,23 +64,22 @@ public class TopicoService {
     public Page<TopicoFullDto> listarTodos(Pageable pagina) {
         return topicoRepository.listarTopicosComoDto(pagina);
     }
+
     public TopicoDto actualizarTopico(Long id, UpdateTopicoDto datosActualizados) throws BadRequestException {
-        Optional<Topico> original = topicoRepository.findById(id);
-        if (original.isPresent()){
-            original.get().setMensaje(datosActualizados.mensaje());
-            original.get().setTitulo(datosActualizados.titulo());
-            try {
-                return TopicoDto.convertirTopicoEnDto(topicoRepository.save(original.get()));
-            } catch (Exception e) {
-                throw new BadRequestException("ya existe un topico con ese nombre");
-            }
-        }else{
-            throw new BadRequestException("no existe un topico con el id " + id);
+        Topico original = topicoRepository.findById(id).orElse(null);
+        if (original == null) throw new BadRequestException("no existe un topico con el id " + id);
+
+        original.setMensaje(datosActualizados.mensaje());
+        original.setTitulo(datosActualizados.titulo());
+        try {
+            return TopicoDto.convertirTopicoEnDto(topicoRepository.save(original));
+        } catch (Exception e) {
+             throw new BadRequestException("ocurrio un problema guardando el topico en la base de datos");
         }
     }
+
     public List<Categoria> listarCategorias(){
         return categoriaRepository.findAll();
     }
-
 
 }

@@ -1,4 +1,7 @@
 package com.alura.foro.Respuesta;
 
-public record UpdateRespuestaDto(String mensaje) {
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
+
+public record UpdateRespuestaDto(@NotBlank @Size(min= 10, max = 256)String mensaje) {
 }

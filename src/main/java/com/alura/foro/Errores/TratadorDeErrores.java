@@ -21,6 +21,7 @@ public class TratadorDeErrores {
         return ResponseEntity.badRequest().body(errores);
 
     }
+
     @ExceptionHandler(BadRequestException.class)
     public ResponseEntity tratarError400(BadRequestException ex){
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorDto(ex.getMessage()));

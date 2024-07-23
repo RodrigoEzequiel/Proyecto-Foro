@@ -1,4 +1,9 @@
 package com.alura.foro.Usuario;
 
-public record loginDto(String login, String clave) {
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
+
+public record loginDto(@Email String login,
+                       @NotBlank @Size(min= 8, max = 256)String clave) {
 }

@@ -9,10 +9,10 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import java.util.List;
 
 @Tag(name = "Respuesta Controller", description = "Metodos para la Respuesta")
 @RestController
@@ -29,7 +29,7 @@ public class RespuestaController {
             @ApiResponse(responseCode = "400", description = "No pudo crearse la respuesta",
                     content = @Content), })
     @PostMapping
-    public ResponseEntity guardarRespuesta(@RequestBody NewRespuestaDto newRespuestaDto){
+    public ResponseEntity guardarRespuesta(@RequestBody @Valid NewRespuestaDto newRespuestaDto){
         RespuestaDto nueva = respuestaService.nuevaRespuesta(newRespuestaDto);
         return ResponseEntity.ok(nueva);
     }
@@ -80,7 +80,8 @@ public class RespuestaController {
             @ApiResponse(responseCode = "400", description = "no se pudo encontrar la respuesta",
                     content = @Content), })
     @PatchMapping("/{id}")
-    public ResponseEntity actualizarRespuesta(@PathVariable Long id,@RequestBody UpdateRespuestaDto datosActualizados) throws BadRequestException {
+    public ResponseEntity actualizarRespuesta(@PathVariable Long id,
+                                              @RequestBody @Valid UpdateRespuestaDto datosActualizados) throws BadRequestException {
         RespuestaDto actualizado = respuestaService.actualizarRespuesta(id,datosActualizados);
         return ResponseEntity.ok(actualizado);
     }
